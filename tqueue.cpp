@@ -11,7 +11,7 @@ TQueue::TQueue(istream &srcfile, int offset, int nRecords)
 }
 
 bool TQueue::empty(){
-	return d_onHold == 0 ? true : false;
+	return d_queue.size() == 0 ? true : false;
 }
 
 bool TQueue::allRead(){
@@ -19,17 +19,26 @@ bool TQueue::allRead(){
 }
 
 void TQueue::readNext(){
-	if(!allRead()) {
+	Person p;
+
+	if(!allRead())
 		d_file.seekg(d_offset, ios::beg);
-		d_person.read(d_file);
-		d_onHold = 1;
-		d_offset = d_file.tellg();
+
+	int i;
+	for(i = 0; i < TQueue::BUFSIZE && !allRead(); i++){
+		p.read(d_file);
+		d_queue.push(move(p));
+
+		d_nRead++;
 	}
+
+	if(i > 0)
+		d_offset = d_file.tellg();
 }
 
 Person TQueue::next(){
-	Person p = std::move(d_person);
-	d_onHold = 0;
+	Person p = move(d_queue.front());
+	d_queue.pop();
 
 	readNext();
 
@@ -37,5 +46,5 @@ Person TQueue::next(){
 }
 
 Person &TQueue::peek(){
-	return d_person;
+	return d_queue.front();
 }

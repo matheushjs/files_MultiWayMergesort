@@ -137,7 +137,6 @@ void TournamentTree::buildTree(){
 	// Get the number of leaves in that last level
 	nLeaves = pow(2, d_treeHeight-1);
 
-
 	// Fill the last level with data from the queues
 	for(int i = 0; i < nLeaves; i++){
 		if(i < d_nLeaves){

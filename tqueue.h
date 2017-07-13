@@ -2,9 +2,13 @@
 #define TQUEUE_H
 
 #include <fstream>
+#include <queue>
 #include "person.h"
 
 class TQueue {
+	// Max number of Person objects in the queue
+	const static int BUFSIZE = 65;
+
 	// Associated ifstream
 	std::istream &d_file;
 
@@ -18,16 +22,13 @@ class TQueue {
 	int d_nRead;
 
 	// Next person on the queue
-	Person d_person;
+	std::queue<Person> d_queue;
 
-	// Number of persons on variable d_person
-	int d_onHold;
-
-	// Retrieves the next person on the file
+	// Retrieves the next Person objects from the file
 	void readNext();
 
 	// Returns True if all records have been read from the file.
-	// Some records might still be in memory; this can be checked with d_onHold.
+	// Some records might still be in memory; this can be checked with d_queue.
 	bool allRead();
 
 public:
