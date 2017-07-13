@@ -13,25 +13,16 @@ class MyDatabase {
 	// Number of elements in the database
 	int d_size;
 
-	// Reads next person in the database file.
-	Person readPerson();
-
-	// Writes a person to the database file.
-	void writePerson(Person &p);
-
 public:
 	MyDatabase();
+	~MyDatabase();
 
 	int size();
-
-	// The database file is a sequence of ID (long int) / name (string).
-	// The input file 'fp' should be a sequence of ID (a string representing a number) and
-	//   a name, separated by blank spaces.
-	void readFromInputFile(std::istream &fp);
 
 	// Prints all records in the database file.
 	void printAll();
 
+	// Generates a random database file, with nRecords records.
 	void generateRandomFile(long int nRecords);
 };
 

@@ -6,11 +6,15 @@ CONFIG -= qt
 SOURCES += main.cpp \
 	mydatabase.cpp \
 	person.cpp \
-	utils.cpp
+	utils.cpp \
+    tournamenttree.cpp \
+    tqueue.cpp
 
 HEADERS += mydatabase.h \
 	person.h \
-	utils.h
+	utils.h \
+    tournamenttree.h \
+    tqueue.h
 
 CONFIG += c++11
 
