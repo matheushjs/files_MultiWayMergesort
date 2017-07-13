@@ -9,7 +9,7 @@
 
 class TournamentTree {
 	std::istream &d_infile;
-	std::ofstream d_outfile;
+	std::fstream d_outfile;
 	std::vector<TQueue> d_leaves;
 
 	int d_vecSize;

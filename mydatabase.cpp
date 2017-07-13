@@ -4,6 +4,7 @@
 
 #include "mydatabase.h"
 #include "person.h"
+#include "tournamenttree.h"
 
 using namespace std;
 
@@ -59,4 +60,10 @@ void MyDatabase::generateRandomFile(long nRecords){
 	}
 }
 
+void MyDatabase::mergeSort(int nLeaves){
+	TournamentTree tree(d_fp, sizeof(int), d_size, nLeaves);
 
+	// While tree is not empty
+	//   Pick a Person from the tree
+	//   Save it to another file
+}

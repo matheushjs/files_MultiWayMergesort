@@ -24,6 +24,9 @@ public:
 
 	// Generates a random database file, with nRecords records.
 	void generateRandomFile(long int nRecords);
+
+	// Sorts the file using external mergesort
+	void mergeSort(int nLeaves);
 };
 
 #endif // MYDATABASE_H
