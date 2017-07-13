@@ -109,6 +109,25 @@ TournamentTree::TournamentTree(istream &srcfile, int initOffset, int nRecords, i
 	buildTree();
 }
 
+// Recursively fills a tournament tree, based on the leaf nodes.
+// Each node receives the minimum between its children.
+static
+void fillTree(vector<long int> &vec, int idx, int size){
+	if(idx >= size) return;
+
+	int right = RIGHT(idx);
+	int left = LEFT(idx);
+
+	fillTree(vec, right, size);
+	fillTree(vec, left, size);
+
+	if(right < size) {
+		vec[idx] = min(vec[left], vec[right]);
+	} else if (left < size) {
+		vec[idx] = vec[left];
+	}
+}
+
 void TournamentTree::buildTree(){
 	int idx, nLeaves;
 
@@ -124,9 +143,11 @@ void TournamentTree::buildTree(){
 		if(i < d_nLeaves){
 			d_tree[idx+i] = d_leaves[i].peek().id();
 		} else {
-			d_tree[idx+i] = -1; // Empty leaves
+			d_tree[idx+i] = INT64_MAX; // Empty leaves
 		}
 	}
+
+	fillTree(d_tree, 0, d_treeSize);
 
 	// Tree must maintain the minimum element on the root!
 
