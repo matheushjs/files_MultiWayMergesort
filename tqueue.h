@@ -20,8 +20,15 @@ class TQueue {
 	// Next person on the queue
 	Person d_person;
 
+	// Number of persons on variable d_person
+	int d_onHold;
+
 	// Retrieves the next person on the file
 	void readNext();
+
+	// Returns True if all records have been read from the file.
+	// Some records might still be in memory; this can be checked with d_onHold.
+	bool allRead();
 
 public:
 	TQueue(std::istream &srcfile, int offset, int nRecords);

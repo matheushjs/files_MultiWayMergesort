@@ -55,8 +55,9 @@ void sortPerson(vector<Person> &vec){
 
 TournamentTree::TournamentTree(istream &srcfile, int initOffset, int nRecords, int nLeaves)
 	: d_infile(srcfile),
-	  d_vecSize( pow(2, ceil(log2(nLeaves)) + 1) - 1), // heap-style tree
-	  d_vector( d_vecSize ),
+	  d_treeHeight( ceil(log2(nLeaves)) + 1 ),
+	  d_treeSize( pow(2, d_treeHeight) - 1), // heap-style tree
+	  d_tree( d_treeSize ),
 	  d_initOffset(initOffset), d_nRecords(nRecords),
 	  d_nLeaves(nLeaves)
 {
@@ -65,12 +66,14 @@ TournamentTree::TournamentTree(istream &srcfile, int initOffset, int nRecords, i
 	int blockSize; // Number of records per block that will be sorted in memory
 	blockSize = nRecords / nLeaves; // Let it round down
 
-	d_infile.seekg(d_initOffset);
+	d_infile.seekg(d_initOffset, ios::beg);
 
+	int curOffset;
 	Person p;
 	vector<Person> vec;
 	for(int i = 0; i < d_nLeaves; i++){
 		vec.clear();
+		curOffset = d_infile.tellg();
 
 		// Read blockSize Person from the file
 		for(int j = 0; j < blockSize; j++){
@@ -93,14 +96,46 @@ TournamentTree::TournamentTree(istream &srcfile, int initOffset, int nRecords, i
 		sortPerson(vec);
 
 		// Save sorted block to the sorted file
+		d_outfile.clear();
+		d_outfile.seekp(0, ios::end);
 		for(Person &pp: vec){
 			pp.write(d_outfile);
-			cout << pp.id() << '\n';
 		}
 
 		// Create a TQueue for this block of the file and add it to d_leaves
-		d_leaves.push_back( TQueue(d_outfile, d_infile.tellg() - (long) d_initOffset, vec.size()) );
+		d_leaves.push_back( TQueue(d_outfile, curOffset - d_initOffset, vec.size()) );
 	}
 
-	// INITIALIZE TREE HERE
+	buildTree();
+}
+
+void TournamentTree::buildTree(){
+	int idx, nLeaves;
+
+	// Get the first index of the last level of the tree
+	idx = pow(2, d_treeHeight - 1) - 1;
+
+	// Get the number of leaves in that last level
+	nLeaves = pow(2, d_treeHeight-1);
+
+
+	// Fill the last level with data from the queues
+	for(int i = 0; i < nLeaves; i++){
+		if(i < d_nLeaves){
+			d_tree[idx+i] = d_leaves[i].peek().id();
+		} else {
+			d_tree[idx+i] = -1; // Empty leaves
+		}
+	}
+
+	// Tree must maintain the minimum element on the root!
+
+	// Print heap (DEBUGGING)
+	int count = 0;
+	for(int i = 0; i < d_treeHeight; i++){
+		for(int j = pow(2, i); j > 0; j--){
+			cout << d_tree[count++] << ' ';
+		}
+		cout << '\n';
+	}
 }

@@ -12,8 +12,9 @@ class TournamentTree {
 	std::fstream d_outfile;
 	std::vector<TQueue> d_leaves;
 
-	int d_vecSize;
-	std::vector<long int> d_vector;
+	int d_treeHeight;
+	int d_treeSize;
+	std::vector<long int> d_tree;
 
 	// Offset after the file header.
 	int d_initOffset;
@@ -23,6 +24,9 @@ class TournamentTree {
 
 	// Number of leaf nodes in the tournament tree.
 	int d_nLeaves;
+
+	// Builds the heap-like tree based on the vector of TQueues
+	void buildTree();
 
 public:
 	TournamentTree(std::istream &srcfile, int initOffset, int nRecords, int nLeaves);
