@@ -5,6 +5,12 @@
 #include <queue>
 #include "person.h"
 
+/* Class that implements a queue of records in a file.
+ * The queue begins at an offset X given upon construction, and reads up to R records from the file.
+ * Every time next() is called, the next record is returned.
+ * Since records are read in blocks of BUFSIZE records, not all calls to next() will result in disk
+ *   access.
+ */
 class TQueue {
 	// Max number of Person objects in the queue
 	const static int BUFSIZE = 65;

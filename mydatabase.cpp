@@ -20,8 +20,6 @@ MyDatabase::MyDatabase() : d_filename("database.db") {
 	} else {
 		d_fp.read( (char*) &d_size, sizeof(int));
 	}
-
-	cout << "MyDatabase: " << d_size << '\n';
 }
 
 MyDatabase::~MyDatabase() {
@@ -68,11 +66,13 @@ void MyDatabase::mergeSort(int nLeaves){
 
 	file.open("output.db", ios::out | ios::trunc);
 
-	Person p;
 	int count = 0;
 	while(!tree.empty()){
-		p = tree.next();
-		p.write(file);
+		tree.next().write(file);
+		//Person p = tree.next();
+		//cout << p.id() << '\n';
 		count++;
 	}
+
+	d_fp.flush();
 }

@@ -7,6 +7,10 @@
 #include "tqueue.h"
 #include "person.h"
 
+/* Class that implements a Tournament tree.
+ * The tree is used to manage the values in the leaf nodes. Each non-leaf node contains the minimal
+ *   value among its children. This way, the root node always has the minimal value among all leaf nodes.
+ */
 class TournamentTree {
 	std::istream &d_infile;
 	std::fstream d_outfile;
