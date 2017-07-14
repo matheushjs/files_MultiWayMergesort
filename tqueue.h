@@ -9,6 +9,9 @@ class TQueue {
 	// Max number of Person objects in the queue
 	const static int BUFSIZE = 65;
 
+	// Represents a null person. Will be kept private for now.
+	static Person s_nullPerson;
+
 	// Associated ifstream
 	std::istream &d_file;
 

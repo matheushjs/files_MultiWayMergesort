@@ -3,6 +3,8 @@
 
 using namespace std;
 
+Person TQueue::s_nullPerson = Person("", INT64_MAX);
+
 TQueue::TQueue(istream &srcfile, int offset, int nRecords)
 	: d_file(srcfile), d_offset(offset),
 	  d_nRecords(nRecords), d_nRead(0)
@@ -21,8 +23,10 @@ bool TQueue::allRead(){
 void TQueue::readNext(){
 	Person p;
 
-	if(!allRead())
+	if(!allRead()){
+		d_file.clear();
 		d_file.seekg(d_offset, ios::beg);
+	}
 
 	int i;
 	for(i = 0; i < TQueue::BUFSIZE && !allRead(); i++){
@@ -37,14 +41,21 @@ void TQueue::readNext(){
 }
 
 Person TQueue::next(){
-	Person p = move(d_queue.front());
+	if(d_queue.size() == 0){
+		cerr << "Error. Read from an empty TQueue\n";
+		return s_nullPerson;
+	}
+
+	Person p = d_queue.front();
 	d_queue.pop();
 
-	readNext();
+	if(d_queue.size() == 0)
+		readNext();
 
 	return p;
 }
 
 Person &TQueue::peek(){
-	return d_queue.front();
+	if(d_queue.size() == 0) return s_nullPerson;
+	else return d_queue.front();
 }
