@@ -28,5 +28,8 @@ long int random_long(){
 	static default_random_engine eng(r());
 	static uniform_int_distribution<long int> runif;
 
+	long int retval;
+	while( (retval = runif(eng)) == INT64_MAX);
+
 	return runif(eng);
 }

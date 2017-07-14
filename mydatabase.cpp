@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-#include <thread>
 
 #include "mydatabase.h"
 #include "person.h"
@@ -21,9 +20,12 @@ MyDatabase::MyDatabase() : d_filename("database.db") {
 	} else {
 		d_fp.read( (char*) &d_size, sizeof(int));
 	}
+
+	cout << "MyDatabase: " << d_size << '\n';
 }
 
 MyDatabase::~MyDatabase() {
+	d_fp.clear();
 	d_fp.seekp(0, ios::beg);
 	d_fp.write( (char*) &d_size, sizeof(int));
 }
@@ -62,8 +64,15 @@ void MyDatabase::generateRandomFile(long nRecords){
 
 void MyDatabase::mergeSort(int nLeaves){
 	TournamentTree tree(d_fp, sizeof(int), d_size, nLeaves);
+	ofstream file;
 
-	// While tree is not empty
-	//   Pick a Person from the tree
-	//   Save it to another file
+	file.open("output.db", ios::out | ios::trunc);
+
+	Person p;
+	int count = 0;
+	while(!tree.empty()){
+		p = tree.next();
+		p.write(file);
+		count++;
+	}
 }
