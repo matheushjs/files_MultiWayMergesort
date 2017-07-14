@@ -10,6 +10,13 @@ using namespace std;
 #define LEFT(X) (X*2+1)
 #define RIGHT(X) (X*2+2)
 
+// Index of first node in level X of the heap-like tree.
+// Level is given as a number >= 1
+#define LEVELIDX(X) (pow(2,X-1) - 1)
+
+// Number of nodes in a given X level of the heap-like tree.
+#define LEVELCOUNT(X) (pow(2, X-1))
+
 static
 void heapify_up(vector<Person> &vec, int index){
 	while(index != 0) {
@@ -53,18 +60,28 @@ void sortPerson(vector<Person> &vec){
 	}
 }
 
+static
+int nextpow2(int num){
+	int i = 1;
+	while(i < num)
+		i <<= 1;
+	return i;
+}
+
 TournamentTree::TournamentTree(istream &srcfile, int initOffset, int nRecords, int nLeaves)
 	: d_infile(srcfile),
-	  d_treeHeight( ceil(log2(nLeaves)) + 1 ),
+	  d_treeHeight( (int) log2(nextpow2(nLeaves)) + 1 ),
 	  d_treeSize( pow(2, d_treeHeight) - 1), // heap-style tree
 	  d_tree( d_treeSize ),
 	  d_initOffset(initOffset), d_nRecords(nRecords),
-	  d_nLeaves(nLeaves)
+	  d_nLeaves(nLeaves), d_nRemoved(0)
 {
+	cout << "TournamentTree: " << initOffset << ' ' << nRecords << ' ' << nLeaves << '\n';
+
 	d_outfile.open("blocks.db", ios::in | ios::out | ios::trunc);
 
-	int blockSize; // Number of records per block that will be sorted in memory
-	blockSize = nRecords / nLeaves; // Let it round down
+	// Number of records per block that will be sorted in memory
+	int blockSize = nRecords / nLeaves; // Let it round down
 
 	d_infile.seekg(d_initOffset, ios::beg);
 
@@ -75,7 +92,7 @@ TournamentTree::TournamentTree(istream &srcfile, int initOffset, int nRecords, i
 		vec.clear();
 		curOffset = d_infile.tellg();
 
-		// Read blockSize Person from the file
+		// Read blockSize Person objects from the file
 		for(int j = 0; j < blockSize; j++){
 			p.read(d_infile);
 			vec.push_back(p);
@@ -132,10 +149,10 @@ void TournamentTree::buildTree(){
 	int idx, nLeaves;
 
 	// Get the first index of the last level of the tree
-	idx = pow(2, d_treeHeight - 1) - 1;
+	idx = LEVELIDX(d_treeHeight);
 
 	// Get the number of leaves in that last level
-	nLeaves = pow(2, d_treeHeight-1);
+	nLeaves = LEVELCOUNT(d_treeHeight);
 
 	// Fill the last level with data from the queues
 	for(int i = 0; i < nLeaves; i++){
