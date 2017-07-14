@@ -25,11 +25,26 @@ class TournamentTree {
 	// Number of leaf nodes in the tournament tree.
 	int d_nLeaves;
 
+	// Number of Person objects removed from the tree.
+	int d_nRemoved;
+
 	// Builds the heap-like tree based on the vector of TQueues
 	void buildTree();
 
+	// Rebuilds the heap-like tree with the new value added at a leaf node
+	void rebuildTree(int idx, long int value);
+
+	void printTree();
+
 public:
 	TournamentTree(std::istream &srcfile, int initOffset, int nRecords, int nLeaves);
+
+	// Returns whether all records have been removed from the tree or not.
+	bool empty();
+
+	// Returns the next Person object in the tree.
+	// Minimum Person comes first.
+	Person next();
 };
 
 #endif // TOURNAMENTTREE_H

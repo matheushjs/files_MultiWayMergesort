@@ -76,8 +76,6 @@ TournamentTree::TournamentTree(istream &srcfile, int initOffset, int nRecords, i
 	  d_initOffset(initOffset), d_nRecords(nRecords),
 	  d_nLeaves(nLeaves), d_nRemoved(0)
 {
-	cout << "TournamentTree: " << initOffset << ' ' << nRecords << ' ' << nLeaves << '\n';
-
 	d_outfile.open("blocks.db", ios::in | ios::out | ios::trunc);
 
 	// Number of records per block that will be sorted in memory
@@ -164,15 +162,59 @@ void TournamentTree::buildTree(){
 	}
 
 	fillTree(d_tree, 0, d_treeSize);
+}
 
-	// Tree must maintain the minimum element on the root!
-
+void TournamentTree::printTree(){
 	// Print heap (DEBUGGING)
 	int count = 0;
 	for(int i = 0; i < d_treeHeight; i++){
 		for(int j = pow(2, i); j > 0; j--){
-			cout << d_tree[count++] << ' ';
+			cout << (d_tree[count] == INT64_MAX ? -1 : d_tree[count]) << ' ';
+			count++;
 		}
 		cout << '\n';
 	}
+}
+
+bool TournamentTree::empty() {
+	return d_nRemoved == d_nRecords ? true : false;
+}
+
+void TournamentTree::rebuildTree(int idx, long int value){
+	int left, right;
+
+	d_tree[idx] = value;
+
+	do {
+		idx = PARENT(idx);
+		right = RIGHT(idx);
+		left = LEFT(idx);
+
+		d_tree[idx] = min(d_tree[right], d_tree[left]);
+	} while(idx != 0);
+}
+
+Person TournamentTree::next(){
+	int curIdx = 0;
+	int idxLim = LEVELIDX(d_treeHeight); //Index of first leaf node.
+
+	// Follow the path whose elements are all equal the element in the root
+	while(curIdx < idxLim){
+		int left = LEFT(curIdx);
+		int right = RIGHT(curIdx);
+
+		if(d_tree[left] == d_tree[curIdx]){
+			curIdx = left;
+		} else {
+			curIdx = right;
+		}
+	}
+
+	int tqueue_number = curIdx - idxLim;
+	Person p = d_leaves[tqueue_number].next();
+
+	rebuildTree(curIdx, d_leaves[tqueue_number].peek().id());
+	d_nRemoved++;
+
+	return p;
 }
